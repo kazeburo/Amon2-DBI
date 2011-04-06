@@ -70,6 +70,14 @@ sub prepare {
     return $sth;
 }
 
+sub do {
+    my ($self, @args) = @_;
+    my $result = $self->SUPER::do(@args) or do {
+        Amon2::DBI::Util::handle_error($_[1], [], $self->errstr);
+    };
+    return $result;
+}
+
 package Amon2::DBI::st; # statement handler
 our @ISA = qw(DBI::st);
 
