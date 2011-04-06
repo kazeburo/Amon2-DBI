@@ -1,16 +1,16 @@
 use strict;
 use warnings;
 use Test::More;
-use Amon2::DBI;
+use DBI;
 use Encode;
 use Test::Requires 'DBD::SQLite';
 
 eval {
-    Amon2::DBI->connect('dbi:unknown:', '', '');
+    DBI->connect('dbi:unknown:', '', '', { RootClass => 'Amon2::DBI' } );
 };
 ok $@, "dies with unknown driver, automatically.";
 
-my $dbh = Amon2::DBI->connect('dbi:SQLite::memory:', '', '');
+my $dbh = DBI->connect('dbi:SQLite::memory:', '', '', { RootClass => 'Amon2::DBI' });
 $dbh->do(q{CREATE TABLE foo (e)});
 $dbh->insert('foo', {e => 3});
 $dbh->do_i('INSERT INTO foo ', {e => 4});

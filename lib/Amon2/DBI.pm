@@ -33,6 +33,18 @@ use SQL::Interp ();
 
 sub connected {
     my $dbh = shift;
+    my ($dsn, $user, $pass, $attr) = @_;
+    $dbh->STORE( 'RaiseError' => 0 );
+    if ($DBI::VERSION >= 1.614) {
+        $dbh->STORE( 'AutoInactiveDestroy' => 1 ) unless exists $attr->{AutoInactiveDestroy};
+    }
+    if ($dsn =~ /^dbi:SQLite:/) {
+        $dbh->{sqlite_unicode} = 1 unless exists $attr->{sqlite_unicode};
+    }
+    if ($dsn =~ /^dbi:mysql:/ && ! exists $attr->{mysql_enable_utf8} ) {
+        $dbh->{mysql_enable_utf8} = 1;
+        $dbh->do("SET NAMES utf8");
+    }
     $dbh->{private_connect_info} = [@_];
     $dbh->SUPER::connected(@_);
 }
